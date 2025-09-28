@@ -4,7 +4,7 @@ const PortalFrame = ({ url, onBack }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const backendUrl = 'https://outletbackend.onrender.com';
+  const backendUrl = 'https://outlet-backend.vercel.app';
   const learnUrl = `${backendUrl}/learn?url=${encodeURIComponent(url)}`;
 
   useEffect(() => {
@@ -129,3 +129,4 @@ const PortalFrame = ({ url, onBack }) => {
 };
 
 export default PortalFrame;
+
