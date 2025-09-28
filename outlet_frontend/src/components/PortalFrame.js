@@ -4,9 +4,11 @@ const PortalFrame = ({ url, onBack }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const backendUrl = 'https://outlet-backend.vercel.app';
+  // Updated backend URL to use Vercel serverless API
+  const backendUrl = 'https://outlet-backend.vercel.app/api';
   const learnUrl = `${backendUrl}/learn?url=${encodeURIComponent(url)}`;
 
+  // Handle iframe load and error events
   useEffect(() => {
     const handleIframeLoad = () => {
       setIsLoading(false);
@@ -30,6 +32,7 @@ const PortalFrame = ({ url, onBack }) => {
     }
   }, []);
 
+  // Refresh iframe content
   const handleRefresh = () => {
     setIsLoading(true);
     setError('');
@@ -39,10 +42,9 @@ const PortalFrame = ({ url, onBack }) => {
     }
   };
 
+  // Escape key to go back
   const handleKeyDown = (e) => {
-    if (e.key === 'Escape') {
-      onBack();
-    }
+    if (e.key === 'Escape') onBack();
   };
 
   useEffect(() => {
@@ -51,60 +53,41 @@ const PortalFrame = ({ url, onBack }) => {
   }, []);
 
   return (
-    <div className="portal-frame">
-      <div className="portal-header">
-        <button className="back-button" onClick={onBack}>
-          ← Back
-        </button>
-        <div className="portal-url">{url}</div>
-        <button className="refresh-button" onClick={handleRefresh}>
-          ⟳ Refresh
-        </button>
+    <div className="portal-frame" style={{ position: 'relative', height: '100%', width: '100%' }}>
+      {/* Header */}
+      <div className="portal-header" style={{ display: 'flex', alignItems: 'center', padding: '0.5rem', background: '#222', color: '#fff' }}>
+        <button onClick={onBack} style={{ marginRight: '1rem' }}>← Back</button>
+        <div style={{ flex: 1 }}>{url}</div>
+        <button onClick={handleRefresh}>⟳ Refresh</button>
       </div>
-      
+
+      {/* Loading Overlay */}
       {isLoading && (
         <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          zIndex: 1000,
-          background: 'rgba(255, 255, 255, 0.9)',
-          padding: '2rem',
-          borderRadius: '8px',
-          textAlign: 'center'
+          position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(255,255,255,0.9)', display: 'flex',
+          flexDirection: 'column', justifyContent: 'center', alignItems: 'center', zIndex: 1000
         }}>
-          <div className="loading-spinner" style={{ margin: '0 auto 1rem' }}></div>
+          <div className="loading-spinner" style={{ marginBottom: '1rem' }}></div>
           <div>Loading website...</div>
         </div>
       )}
 
+      {/* Error Overlay */}
       {error && (
         <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          zIndex: 1000,
-          background: '#ff4757',
-          color: 'white',
-          padding: '2rem',
-          borderRadius: '8px',
-          textAlign: 'center',
-          maxWidth: '400px'
+          position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+          background: '#ff4757', color: '#fff', display: 'flex',
+          flexDirection: 'column', justifyContent: 'center', alignItems: 'center', zIndex: 1000, padding: '2rem'
         }}>
-          <div style={{ marginBottom: '1rem', fontSize: '1.2rem' }}>⚠️</div>
+          <div style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>⚠️</div>
           <div>{error}</div>
           <button
             onClick={onBack}
             style={{
-              marginTop: '1rem',
-              padding: '0.5rem 1rem',
-              background: 'white',
-              color: '#ff4757',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
+              marginTop: '1rem', padding: '0.5rem 1rem',
+              background: '#fff', color: '#ff4757', border: 'none',
+              borderRadius: '4px', cursor: 'pointer'
             }}
           >
             Go Back
@@ -112,12 +95,13 @@ const PortalFrame = ({ url, onBack }) => {
         </div>
       )}
 
+      {/* Iframe */}
       <iframe
         id="portal-iframe"
-        className="portal-iframe"
         src={learnUrl}
-        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
         title="Portal Frame"
+        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
+        style={{ width: '100%', height: '100%', border: 'none' }}
         onLoad={() => setIsLoading(false)}
         onError={() => {
           setIsLoading(false);
@@ -129,4 +113,3 @@ const PortalFrame = ({ url, onBack }) => {
 };
 
 export default PortalFrame;
-
